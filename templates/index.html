@@ -1,0 +1,70 @@
+{% extends "_layout.html" %}
+{% block content %}
+<div class="text-center">
+    <p>Enter your database connection details below.</p>
+</div>
+
+{% if products is none %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <form method="post" action="{{ url_for('home.connect') }}">
+            <div class="mb-3">
+                <label for="url" class="form-label">URL</label>
+                <input type="text" class="form-control" id="url" name="url" value="http://localhost:8069/" required />
+            </div>
+            <div class="mb-3">
+                <label for="databaseName" class="form-label">Database Name</label>
+                <input type="text" class="form-control" id="databaseName" name="databaseName" value="mydb" required />
+            </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" value="admin" required />
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Load products</button>
+        </form>
+    </div>
+</div>
+{% else %}
+<h2>Products List</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Reference</th>
+            <th>Price</th>
+            <th>Quantity Available</th>
+            <th>Category</th>
+            <th>Max Guests</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.id }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.default_code or "N/A" }}</td>
+            <td>{{ product.list_price or "0.00" }}</td>
+            <td>{{ product.qty_available or "0" }}</td>
+            <td>
+                {% if product.categ_id %}
+                    {% if product.categ_id is iterable %}
+                        {{ product.categ_id[1] }}
+                    {% else %}
+                        {{ product.categ_id }}
+                    {% endif %}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>{{ product.max_guests or "N/A" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}
