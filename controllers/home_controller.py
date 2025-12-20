@@ -15,17 +15,21 @@ def connect():
     password = request.form.get('password', '')
 
     client = OdooClient(url, db)
-    ok, auth, err = client.authenticate(username, password)
+
+    # ✅ authenticate() retourne (ok, uid, err)
+    ok, uid, err = client.authenticate(username, password)
     if not ok:
         flash(f"Connection failed: {err}", 'alert-danger')
         return render_template('index.html', products=None)
 
-    uid = auth["uid"]  # 👈 récupère ton UID
-    ok, result, err = client.get_products(uid)
+    # ✅ uid est un entier, pas un dict
+    ok, result, err = client.get_products()
     if not ok:
         flash(f"Connected but failed to fetch products: {err}", 'alert-danger')
         return render_template('index.html', products=None)
 
     products = result or []
-    flash(f"Connection successful! Session ID: {auth['session_id']}, UID: {auth['uid']}. Found {len(products)} products.", 'alert-success')
-    return render_template('index.html', products=products, session_id=auth['session_id'], user_id=auth['uid'])
+
+    flash(f"Connection successful! UID: {uid}. Found {len(products)} products.", 'alert-success')
+
+    return render_template('index.html', products=products, user_id=uid)

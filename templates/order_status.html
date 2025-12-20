@@ -1,0 +1,30 @@
+{% extends "_layout.html" %}
+
+{% block content %}
+<h1>Commande créée avec succès !</h1>
+
+<div>
+    <p><strong>ID de la commande :</strong> {{ order.id }}</p>
+    <p><strong>Numéro :</strong> {{ order.name }}</p>
+    <p><strong>Client :</strong> {{ order.partner_name }}</p>
+    <p><strong>Date :</strong> {{ order.date_order }}</p>
+    <p><strong>Montant total :</strong> {{ order.amount_total }} €</p>
+    <p><strong>Statut actuel :</strong>
+        {% if order.state == "draft" %}
+            Devis
+        {% elif order.state == "sent" %}
+            Devis envoyé
+        {% elif order.state == "sale" %}
+            Confirmée
+        {% elif order.state == "done" %}
+            Terminée
+        {% elif order.state == "cancel" %}
+            Annulée
+        {% else %}
+            {{ order.state }}
+        {% endif %}
+    </p>
+</div>
+
+<a href="{{ url_for('order.new_order') }}">Créer une nouvelle commande</a>
+{% endblock %}

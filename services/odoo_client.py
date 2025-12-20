@@ -7,6 +7,9 @@ class OdooClient:
         self.db = db
         self.session = requests.Session()
 
+    # -------------------------
+    # AUTHENTIFICATION
+    # -------------------------
     def authenticate(self, login: str, password: str):
         url = self.base_url + 'web/session/authenticate'
         payload = {
@@ -15,43 +18,123 @@ class OdooClient:
             "params": {"db": self.db, "login": login, "password": password},
             "id": random.randint(1, 10**6)
         }
-        resp = self.session.post(url, json=payload, timeout=10)
-        if not resp.ok:
-            return False, None, f"HTTP {resp.status_code}"
-        data = resp.json()
-        if 'error' in data:
-            msg = data['error'].get('data', {}).get('message', 'Authentication failed')
-            return False, None, msg
-        uid = data.get('result', {}).get('uid')
-        session_id = None
-        for c in self.session.cookies:
-            if c.name == 'session_id':
-                session_id = c.value
-        if uid and uid > 0:
-            return True, {"uid": uid, "session_id": session_id or "Cookie not found"}, None
-        return False, None, "Invalid credentials"
 
-    def get_products(self, uid):
-        url = self.base_url + 'web/dataset/call_kw'
+        resp = self.session.post(url, json=payload)
+        data = resp.json()
+
+        if "error" in data:
+            return False, None, data["error"]["data"]["message"]
+
+        uid = data["result"]["uid"]
+        return True, uid, None
+
+    # -------------------------
+    # CRÉER UNE COMMANDE
+    # -------------------------
+    def create_order(self, partner_id: int):
+        url = self.base_url + "web/dataset/call_kw"
+        payload = {
+            "jsonrpc": "2.0",
+            "method": "call",
+            "params": {
+                "model": "sale.order",
+                "method": "create",
+                "args": [{
+                    "partner_id": partner_id
+                }],
+                "kwargs": {}
+            },
+            "id": random.randint(1, 10**6)
+        }
+
+        resp = self.session.post(url, json=payload)
+        data = resp.json()
+
+        if "error" in data:
+            return False, None, data["error"]["data"]["message"]
+
+        return True, data["result"], None
+
+    # -------------------------
+    # AJOUTER UNE LIGNE
+    # -------------------------
+    def add_order_line(self, order_id: int, product_id: int, quantity: int, price_unit: float):
+        url = self.base_url + "web/dataset/call_kw"
+        payload = {
+            "jsonrpc": "2.0",
+            "method": "call",
+            "params": {
+                "model": "sale.order.line",
+                "method": "create",
+                "args": [{
+                    "order_id": order_id,
+                    "product_id": product_id,
+                    "product_uom_qty": quantity,
+                    "price_unit": price_unit,
+                    "name": "Ligne ajoutée via API"
+                }],
+                "kwargs": {}
+            },
+            "id": random.randint(1, 10**6)
+        }
+
+        resp = self.session.post(url, json=payload)
+        data = resp.json()
+
+        if "error" in data:
+            return False, None, data["error"]["data"]["message"]
+
+        return True, data["result"], None
+
+    # -------------------------
+    # STATUT DE COMMANDE
+    # -------------------------
+    def get_order_status(self, order_id: int):
+        url = self.base_url + "web/dataset/call_kw"
+        payload = {
+            "jsonrpc": "2.0",
+            "method": "call",
+            "params": {
+                "model": "sale.order",
+                "method": "read",
+                "args": [[order_id]],
+                "kwargs": {"fields": ["state"]}
+            },
+            "id": random.randint(1, 10**6)
+        }
+
+        resp = self.session.post(url, json=payload)
+        data = resp.json()
+
+        if "error" in data:
+            return False, None, data["error"]["data"]["message"]
+
+        return True, data["result"][0]["state"], None
+
+    # -------------------------
+    # LISTE PRODUITS
+    # -------------------------
+    def get_products(self):
+        url = self.base_url + "web/dataset/call_kw"
         payload = {
             "jsonrpc": "2.0",
             "method": "call",
             "params": {
                 "model": "product.product",
                 "method": "search_read",
-                "args": [[["create_uid", "=", uid]]],  
+                "args": [[]],
                 "kwargs": {
-                    "fields": ["id", "name", "default_code", "list_price", "qty_available", "categ_id", "max_guests"],
+                    "fields": ["id", "name", "list_price"],
                     "limit": 50
                 }
             },
             "id": random.randint(1, 10**6)
         }
-        resp = self.session.post(url, json=payload, timeout=10)
-        if not resp.ok:
-            return False, None, f"HTTP {resp.status_code}"
+
+        resp = self.session.post(url, json=payload)
         data = resp.json()
-        if 'error' in data:
-            msg = data['error'].get('data', {}).get('message', 'RPC error')
-            return False, None, msg
-        return True, data.get('result', []), None
+
+        if "error" in data:
+            return False, None, data["error"]["data"]["message"]
+
+        return True, data["result"], None
