@@ -1,28 +1,44 @@
 {% extends "_layout.html" %}
-
 {% block content %}
-<h1>Créer une commande</h1>
+
+<h2>Créer une commande</h2>
 
 <form action="{{ url_for('order.create_order') }}" method="post" class="mt-4">
 
+    <!-- Client -->
     <div class="mb-3">
-        <label for="partner_id" class="form-label">ID Client (partner_id)</label>
-        <input type="number" class="form-control" id="partner_id" name="partner_id" required>
+        <label class="form-label">Client</label>
+        <select name="partner_id" class="form-control" required>
+            <option value="">-- Sélectionner un client --</option>
+            {% for p in partners %}
+                <option value="{{ p.id }}">{{ p.name }} (ID: {{ p.id }})</option>
+            {% endfor %}
+        </select>
     </div>
 
+    <!-- Produit -->
     <div class="mb-3">
-        <label for="product_id" class="form-label">ID Produit (product_id)</label>
-        <input type="number" class="form-control" id="product_id" name="product_id" required>
+        <label class="form-label">Produit</label>
+        <select name="product_id" class="form-control" required>
+            <option value="">-- Sélectionner un produit --</option>
+            {% for prod in products %}
+                <option value="{{ prod.id }}">
+                    {{ prod.name }} — {{ prod.list_price }} € (ID: {{ prod.id }})
+                </option>
+            {% endfor %}
+        </select>
     </div>
 
+    <!-- Quantité -->
     <div class="mb-3">
-        <label for="quantity" class="form-label">Quantité</label>
-        <input type="number" class="form-control" id="quantity" name="quantity" value="1" required>
+        <label class="form-label">Quantité</label>
+        <input type="number" name="quantity" class="form-control" value="1" min="1" required>
     </div>
 
+    <!-- Prix unitaire -->
     <div class="mb-3">
-        <label for="price_unit" class="form-label">Prix unitaire</label>
-        <input type="number" step="0.01" class="form-control" id="price_unit" name="price_unit" required>
+        <label class="form-label">Prix unitaire (€)</label>
+        <input type="number" step="0.01" name="price_unit" class="form-control" required>
     </div>
 
     <button type="submit" class="btn btn-success">Créer la commande</button>

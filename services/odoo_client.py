@@ -1,6 +1,7 @@
 import requests
 import random
 
+
 class OdooClient:
     def __init__(self, base_url: str, db: str):
         self.base_url = base_url.rstrip('/') + '/'
@@ -27,6 +28,62 @@ class OdooClient:
 
         uid = data["result"]["uid"]
         return True, uid, None
+
+    # -------------------------
+    # LISTE DES PARTENAIRES
+    # -------------------------
+    def get_partners(self, limit=50):
+        url = self.base_url + 'web/dataset/call_kw'
+        payload = {
+            "jsonrpc": "2.0",
+            "method": "call",
+            "params": {
+                "model": "res.partner",
+                "method": "search_read",
+                "args": [[]],
+                "kwargs": {
+                    "fields": ["id", "name", "email"],
+                    "limit": limit
+                }
+            },
+            "id": random.randint(1, 10**6)
+        }
+
+        resp = self.session.post(url, json=payload)
+        data = resp.json()
+
+        if "error" in data:
+            return False, None, data["error"]["data"]["message"]
+
+        return True, data.get("result", []), None
+
+    # -------------------------
+    # LISTE DES PRODUITS
+    # -------------------------
+    def get_products(self, limit=50):
+        url = self.base_url + "web/dataset/call_kw"
+        payload = {
+            "jsonrpc": "2.0",
+            "method": "call",
+            "params": {
+                "model": "product.product",
+                "method": "search_read",
+                "args": [[]],
+                "kwargs": {
+                    "fields": ["id", "name", "list_price"],
+                    "limit": limit
+                }
+            },
+            "id": random.randint(1, 10**6)
+        }
+
+        resp = self.session.post(url, json=payload)
+        data = resp.json()
+
+        if "error" in data:
+            return False, None, data["error"]["data"]["message"]
+
+        return True, data["result"], None
 
     # -------------------------
     # CRÉER UNE COMMANDE
@@ -110,31 +167,3 @@ class OdooClient:
             return False, None, data["error"]["data"]["message"]
 
         return True, data["result"][0]["state"], None
-
-    # -------------------------
-    # LISTE PRODUITS
-    # -------------------------
-    def get_products(self):
-        url = self.base_url + "web/dataset/call_kw"
-        payload = {
-            "jsonrpc": "2.0",
-            "method": "call",
-            "params": {
-                "model": "product.product",
-                "method": "search_read",
-                "args": [[]],
-                "kwargs": {
-                    "fields": ["id", "name", "list_price"],
-                    "limit": 50
-                }
-            },
-            "id": random.randint(1, 10**6)
-        }
-
-        resp = self.session.post(url, json=payload)
-        data = resp.json()
-
-        if "error" in data:
-            return False, None, data["error"]["data"]["message"]
-
-        return True, data["result"], None

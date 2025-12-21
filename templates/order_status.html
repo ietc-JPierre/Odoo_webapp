@@ -3,28 +3,29 @@
 {% block content %}
 <h1>Commande créée avec succès !</h1>
 
-<div>
-    <p><strong>ID de la commande :</strong> {{ order.id }}</p>
-    <p><strong>Numéro :</strong> {{ order.name }}</p>
-    <p><strong>Client :</strong> {{ order.partner_name }}</p>
-    <p><strong>Date :</strong> {{ order.date_order }}</p>
-    <p><strong>Montant total :</strong> {{ order.amount_total }} €</p>
+<div class="mt-4">
+
+    <p><strong>ID de la commande :</strong> {{ order_id }}</p>
+
     <p><strong>Statut actuel :</strong>
-        {% if order.state == "draft" %}
+        {% if status == "draft" %}
             Devis
-        {% elif order.state == "sent" %}
+        {% elif status == "sent" %}
             Devis envoyé
-        {% elif order.state == "sale" %}
+        {% elif status == "sale" %}
             Confirmée
-        {% elif order.state == "done" %}
+        {% elif status == "done" %}
             Terminée
-        {% elif order.state == "cancel" %}
+        {% elif status == "cancel" %}
             Annulée
         {% else %}
-            {{ order.state }}
+            {{ status }}
         {% endif %}
     </p>
+
 </div>
 
-<a href="{{ url_for('order.new_order') }}">Créer une nouvelle commande</a>
+<a href="{{ url_for('order.new_order_form') }}" class="btn btn-primary mt-3">
+    Créer une nouvelle commande
+</a>
 {% endblock %}
