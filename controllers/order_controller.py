@@ -17,9 +17,6 @@ def get_odoo_client_from_session():
     return client
 
 
-# ---------------------------------------------------------
-# FORMULAIRE DE CRÉATION DE COMMANDE
-# ---------------------------------------------------------
 @order_bp.route("/order/new", methods=["GET"])
 def new_order_form():
     client = get_odoo_client_from_session()
@@ -40,9 +37,6 @@ def new_order_form():
     return render_template("order_form.html", partners=partners, products=products)
 
 
-# ---------------------------------------------------------
-# TRAITEMENT : CRÉER LA COMMANDE + AJOUTER LA LIGNE
-# ---------------------------------------------------------
 @order_bp.route("/order/create", methods=["POST"])
 def create_order():
     client = get_odoo_client_from_session()
@@ -80,9 +74,6 @@ def create_order():
     return render_template("order_status.html", order_id=order_id, status=status)
 
 
-# ---------------------------------------------------------
-# LISTE DES CLIENTS (optionnel, debug)
-# ---------------------------------------------------------
 @order_bp.route("/partners/list")
 def partners_list():
     client = get_odoo_client_from_session()
