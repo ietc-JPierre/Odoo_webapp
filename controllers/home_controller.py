@@ -23,14 +23,12 @@ def connect():
         flash(f"Connection failed: {err}", 'danger')
         return render_template('index.html', products=None)
 
-    # Stocker les infos Odoo dans la session Flask
     session['odoo_authenticated'] = True
     session['odoo_url'] = url
     session['odoo_db'] = db
     session['odoo_uid'] = uid
     session['odoo_cookies'] = client.session.cookies.get_dict()
 
-    # Charger les produits pour la page d'accueil
     ok, products, err = client.get_products()
     if not ok:
         flash(f"Connected but failed to fetch products: {err}", 'danger')

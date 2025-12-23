@@ -8,9 +8,6 @@ class OdooClient:
         self.db = db
         self.session = requests.Session()
 
-    # -------------------------
-    # AUTHENTIFICATION
-    # -------------------------
     def authenticate(self, login: str, password: str):
         url = self.base_url + 'web/session/authenticate'
         payload = {
@@ -29,9 +26,6 @@ class OdooClient:
         uid = data["result"]["uid"]
         return True, uid, None
 
-    # -------------------------
-    # LISTE DES PARTENAIRES
-    # -------------------------
     def get_partners(self, limit=50):
         url = self.base_url + 'web/dataset/call_kw'
         payload = {
@@ -57,9 +51,7 @@ class OdooClient:
 
         return True, data.get("result", []), None
 
-    # -------------------------
-    # LISTE DES PRODUITS
-    # -------------------------
+
     def get_products(self, limit=50):
         url = self.base_url + "web/dataset/call_kw"
         payload = {
@@ -85,9 +77,6 @@ class OdooClient:
 
         return True, data["result"], None
 
-    # -------------------------
-    # CRÉER UNE COMMANDE
-    # -------------------------
     def create_order(self, partner_id: int):
         url = self.base_url + "web/dataset/call_kw"
         payload = {
@@ -112,9 +101,6 @@ class OdooClient:
 
         return True, data["result"], None
 
-    # -------------------------
-    # AJOUTER UNE LIGNE
-    # -------------------------
     def add_order_line(self, order_id: int, product_id: int, quantity: int, price_unit: float):
         url = self.base_url + "web/dataset/call_kw"
         payload = {
@@ -143,9 +129,6 @@ class OdooClient:
 
         return True, data["result"], None
 
-    # -------------------------
-    # STATUT DE COMMANDE
-    # -------------------------
     def get_order_status(self, order_id: int):
         url = self.base_url + "web/dataset/call_kw"
         payload = {
