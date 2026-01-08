@@ -5,7 +5,7 @@ Elle permet de s’authentifier et d’afficher uniquement les produits créés 
 
 ---
 
-## 📂 Structure du projet
+##  Structure du projet
 
 odoo-webapp/ 
 ├── app.py # Point d'entrée Flask 
@@ -23,7 +23,7 @@ odoo-webapp/
 
 
 
-🔑 Fonctionnalités
+ Fonctionnalités
 Formulaire de connexion à Odoo (URL, base, utilisateur, mot de passe).
 
 Authentification via l’endpoint /web/session/authenticate.
@@ -34,12 +34,12 @@ Filtrage : seuls les produits créés par l’utilisateur connecté (create_uid 
 
 Tableau des produits avec ID, nom, référence, prix, quantité disponible, catégorie et champs personnalisés (max_guests).
 
-🛠️ Dépendances
+ Dépendances
 Flask – Framework web Python.
 
 Requests – Client HTTP pour communiquer avec Odoo.
 
-📌 Notes
+ Notes
 Assure-toi que ton serveur Odoo est démarré et accessible (par défaut : http://localhost:8069/).
 
 Le champ db doit correspondre au nom de ta base Odoo.

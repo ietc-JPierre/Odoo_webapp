@@ -53,19 +53,19 @@ def create_order():
         flash("Veuillez remplir correctement tous les champs.", "danger")
         return redirect(url_for("order.new_order_form"))
 
-    # 1) Créer la commande
+   
     ok, order_id, err = client.create_order(partner_id)
     if not ok:
         flash(f"Erreur création commande : {err}", "danger")
         return redirect(url_for("order.new_order_form"))
 
-    # 2) Ajouter une ligne
+    
     ok, line_id, err = client.add_order_line(order_id, product_id, quantity, price_unit)
     if not ok:
         flash(f"Erreur ajout ligne : {err}", "danger")
         return redirect(url_for("order.new_order_form"))
 
-    # 3) Récupérer le statut
+    
     ok, status, err = client.get_order_status(order_id)
     if not ok:
         flash(f"Erreur récupération statut : {err}", "danger")
