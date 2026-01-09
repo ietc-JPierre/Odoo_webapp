@@ -73,6 +73,22 @@ def create_order():
 
     return render_template("order_status.html", order_id=order_id, status=status)
 
+@order_bp.route("/order/status", methods=["GET", "POST"]) 
+def order_status(): 
+    client = get_odoo_client_from_session() 
+    if client is None: 
+        flash("Veuillez d'abord vous connecter à Odoo.", "danger") 
+        return redirect(url_for("home.index")) 
+    
+    order_info = None 
+    
+    if request.method == "POST": 
+        order_number = request.form.get("order_number") 
+        ok, order_info, err = client.search_order(order_number) 
+        if not ok: 
+            flash(f"Commande introuvable : {err}", "danger") 
+            order_info = None 
+    return render_template("order_status.html", order_info=order_info)
 
 @order_bp.route("/partners/list")
 def partners_list():

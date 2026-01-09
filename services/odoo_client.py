@@ -150,3 +150,38 @@ class OdooClient:
             return False, None, data["error"]["data"]["message"]
 
         return True, data["result"][0]["state"], None
+    
+    def search_order(self, order_number: str): 
+        url = self.base_url + "web/dataset/call_kw" 
+        payload = { 
+            "jsonrpc": "2.0", 
+            "method": "call", 
+            "params": { 
+                "model": "sale.order", 
+                "method": "search_read", 
+                "args": [[["name", "=", order_number]]], 
+                "kwargs": { 
+                    "fields": ["id", "name", "partner_id", "state", "amount_total"], 
+                    "limit": 1 
+                } 
+            }, 
+            "id": random.randint(1, 10**6) 
+        } 
+        
+        resp = self.session.post(url, json=payload) 
+        data = resp.json() 
+        
+        if "error" in data: 
+            return False, None, data["error"]["data"]["message"] 
+        if not data["result"]: 
+            return False, None, "Aucune commande trouvée" 
+        
+        order = data["result"][0] 
+        
+        return True, { 
+            "id": order["id"], 
+            "number": order["name"], 
+            "customer": order["partner_id"][1], 
+            "status": order["state"], 
+            "amount": order["amount_total"] 
+        }, None

@@ -1,31 +1,34 @@
-{% extends "_layout.html" %}
+{% extends "_layout.html" %} 
+{% block content %} 
+<h2 class="page-title">Suivi de commande</h1>
 
-{% block content %}
-<h1>Commande créée avec succès !</h1>
+<form method="POST" class="card p-4 mt-3"> 
+    <label for="order_number">Numéro de commande</label> 
+    <input type="text" name="order_number" class="form-control" required>
 
-<div class="mt-4">
+    <button class="btn btn-primary mt-3">Rechercher</button> 
+</form> 
 
-    <p><strong>ID de la commande :</strong> {{ order_id }}</p>
+{% if order_info %} 
+<div class="card p-4 mt-4"> 
+    <h3>Résultat</h3>
 
-    <p><strong>Statut actuel :</strong>
-        {% if status == "draft" %}
-            Devis
-        {% elif status == "sent" %}
-            Devis envoyé
-        {% elif status == "sale" %}
-            Confirmée
-        {% elif status == "done" %}
-            Terminée
-        {% elif status == "cancel" %}
-            Annulée
-        {% else %}
-            {{ status }}
-        {% endif %}
-    </p>
-
-</div>
-
-<a href="{{ url_for('order.new_order_form') }}" class="btn btn-primary mt-3">
-    Créer une nouvelle commande
-</a>
+    <p><strong>ID :</strong> {{ order_info.id }}</p> 
+    <p><strong>Numéro :</strong> {{ order_info.number }}</p> 
+    <p><strong>Client :</strong> {{ order_info.customer }}</p> 
+    <p><strong>Statut :</strong> 
+        {% if order_info.status == "draft" %} 
+        Devis 
+        {% elif order_info.status == "sent" %} 
+        Devis envoyé 
+        {% elif order_info.status == "sale" %} 
+        Confirmée {% elif order_info.status == "done" %} 
+        Terminée 
+        {% elif order_info.status == "cancel" %} 
+        Annulée 
+        {% else %} {{ order_info.status }} 
+        {% endif %} 
+    </p> <p><strong>Total :</strong> {{ order_info.amount }} €</p> 
+</div> 
+{% endif %} 
 {% endblock %}
