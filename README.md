@@ -8,18 +8,31 @@ Elle permet de s’authentifier et d’afficher uniquement les produits créés 
 ##  Structure du projet
 
 odoo-webapp/ 
-├── app.py # Point d'entrée Flask 
-├── controllers/ # Contrôleurs (routes) 
-│ └── home_controller.py 
-├── services/ # Services (client Odoo) 
-│ └── odoo_client.py 
-├── templates/ # Templates Jinja2 
-│ ├── index.html 
-  └── _layout.html
-├── static/ # Fichiers statiques (CSS, JS) 
-│ └── css/style.css 
-├── requirements.txt # Dépendances Python
-└── README.md # Documentation du projet
+│
+├── app.py                  
+├── config.py               
+├── README.md
+│
+├── controllers/           
+│   ├── home_controller.py
+│   ├── order_controller.py
+│
+├── models/                 
+│   └── product.py
+│
+├── services/               
+│   └── odoo_client.py
+│
+├── templates/              
+│   ├── _layout.html
+│   ├── index.html
+│   ├── order_form.html
+│   ├── order_status.html
+│   └── partners_list.html
+│
+├── static/
+│   └── css/
+│       └── style.css
 
 
 
